@@ -1,4 +1,4 @@
-name: zookeeper
+name: zookeeper-deployment
 
 releases:
 - name: zookeeper
@@ -9,13 +9,13 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-xenial
-  version: latest
+  version: 621.125  # Replace with a specific stable version
 
 update:
   canaries: 2
-  max_in_flight: 1
+  max_in_flight: 2  # Increase for better parallel updates
   canary_watch_time: 5000-60000
-  update_watch_time: 5000-60000
+  update_watch_time: 10000-120000  # Increased upper bound for stability
 
 instance_groups:
 - name: zookeeper
@@ -27,12 +27,12 @@ instance_groups:
     properties: {}
   vm_type: default
   stemcell: default
-  persistent_disk: 10240
+  persistent_disk_type: large  # Use disk type instead of a fixed size
   networks:
   - name: default
 
 - name: smoke-test
-  azs: [z1]
+  azs: [z1, z2]  # Spread across multiple AZs for better resilience
   lifecycle: errand
   instances: 1
   jobs:
