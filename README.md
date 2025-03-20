@@ -16,5 +16,5 @@ This repository contains configurations for deploying a logging infrastructure u
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/my-logging-setup.git
+   git clone https://github.com/joshuaombasa/Logging-and-Monitoring-Setup
    cd my-logging-setup
