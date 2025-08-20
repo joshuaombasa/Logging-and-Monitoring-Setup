@@ -9,37 +9,42 @@ releases:
 stemcells:
 - alias: default
   os: ubuntu-xenial
-  version: 621.125  # Replace with a specific stable version
+  version: "621.125"  # Pin to a tested stable version
 
 update:
   canaries: 2
-  max_in_flight: 2  # Increase for better parallel updates
+  max_in_flight: 2        # Tune based on VM capacity
   canary_watch_time: 5000-60000
-  update_watch_time: 10000-120000  # Increased upper bound for stability
+  update_watch_time: 10000-120000  # Allow more time for stability
 
 instance_groups:
 - name: zookeeper
   azs: [z1, z2, z3]
   instances: 5
+  vm_type: default
+  stemcell: default
+  persistent_disk_type: large   # BOSH cloud-config defines disk types
+  networks:
+  - name: default
   jobs:
   - name: zookeeper
     release: zookeeper
-    properties: {}
-  vm_type: default
-  stemcell: default
-  persistent_disk_type: large  # Use disk type instead of a fixed size
-  networks:
-  - name: default
+    properties:
+      # Add ZooKeeper-specific configs here (example):
+      tick_time: 2000
+      init_limit: 10
+      sync_limit: 5
+      max_client_cnxns: 60
 
 - name: smoke-test
-  azs: [z1, z2]  # Spread across multiple AZs for better resilience
+  azs: [z1, z2]   # Errand spread across AZs for resilience
   lifecycle: errand
   instances: 1
+  vm_type: default
+  stemcell: default
+  networks:
+  - name: default
   jobs:
   - name: smoke-tests
     release: zookeeper
     properties: {}
-  vm_type: default
-  stemcell: default
-  networks:
-  - name: default
